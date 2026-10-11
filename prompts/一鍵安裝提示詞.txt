@@ -1,0 +1,141 @@
+【一鍵安裝提示詞】
+用法：把下面「===複製從這裡開始===」到「===複製到這裡結束===」整段複製，
+貼進你的 AI 工具（Codex、Claude Code、Gemini CLI、Grok 等桌面／命令列工具）送出。
+安裝包會由 AI 從 GitHub 下載，不用先自己下載任何東西。
+
+===複製從這裡開始===
+
+請帶我完成「AI 長期記憶入門包」的完整安裝（開源版：https://github.com/tygh89071388/ai-memory-starter）。我可能完全不懂程式。請完整讀完這整段指示再開始。
+
+【安裝包來源】
+安裝包放在 GitHub：https://github.com/tygh89071388/ai-memory-starter（下面步驟 8 會帶我下載）。
+如果你能上網，可以先打開這個網址看 README，確認裡面有 install.ps1、hooks、.agents\skills；不能上網也沒關係，這段提示詞已含全部步驟。
+
+【工作方式——每一步都照這個節奏】
+1. 一次只給我一個步驟：先用一句話講「這步要做什麼、為什麼」，再給可以整段複製的指令，再講「預期會看到什麼畫面」。
+2. 給完就停下來，等我回報畫面或貼出輸出，你確認符合預期才給下一步。
+3. 我貼出的畫面跟預期不同時，先對照文末的「常見卡點」，對得上就直接給解法；對不上就明說你不確定，請我打開 https://github.com/tygh89071388/ai-memory-starter 看「常見問題」段，不要瞎猜。
+4. 全程繁體中文。不要用「應該可以」「理論上」這種模糊說法：要嘛給明確下一步，要嘛承認不確定。
+5. 指令照這段提示詞裡的原文給，不要自行改參數、不要換模型名稱、不要加沒列出的參數。
+
+【正式開始前，你要先做三件事】
+
+第一，先用白話向我說明這套系統會裝什麼、裝完會得到什麼：
+- 記憶放在哪：我的專案資料夾裡的 memory\ 資料夾（long-term\ 是整理過的長期記憶）。
+- 日記放在哪：memory\daily\，每天一個檔，AI 工作後自動追加。
+- 教訓目錄放在哪：memory\long-term\目錄.md，每份長期記憶一行、寫著「什麼時候該想起」；整理日記時自動重建，你每次開工先讀它，自己挑出這輪要用的記憶。
+- 會裝六個自動化 hooks（安裝器內建 Codex 格式；用其他工具時由你依該工具官方格式掛上，見文末），逐一講清楚「做什麼、有它的好處、沒裝或沒信任會少什麼」：
+  1. session-start：開新對話時自動載入近期日記脈絡。沒有它＝每次開對話 AI 都不知道最近發生什麼。
+  2. journal-prompt：我送出訊息時暫存原話準備寫日記。沒有它＝日記缺我的原始問題。
+  3. memory-recall：我提問時自動搜尋長期記憶。沒有它＝AI 不會主動想起舊記憶，要我手動提醒。
+  4. journal-tool：只記錄用了哪些工具，不塞完整輸出。沒有它＝日記少一層行為紀錄。
+  5. danger-guard：執行指令前攔截部分高風險刪除／關機指令。沒有它＝少一道輔助護欄（它本來就不是完整的安全邊界）。
+  6. journal-stop：每輪結束把問答寫進當天日記。沒有它＝日記完全不會自動長，等於沒有記憶來源。
+
+第二，列出整個安裝過程會需要我同意或會看到的權限請求，讓我心裡有數（看到這些是正常的，不是中毒）：
+- 用 winget 安裝軟體（AI 工具本體、Node.js）。
+- 執行 npm install -g（安裝 qmd 記憶搜尋工具）。
+- 從 GitHub 下載安裝包壓縮檔，解壓到暫存資料夾（Invoke-WebRequest、Expand-Archive）。
+- 以「單次 Bypass」方式執行 PowerShell 腳本（install.ps1 等；不改全機執行原則）。
+- 讀寫我的專案資料夾（建立 memory\、.ai-assistant\ 等）。
+- 對外網路下載：npm registry、Hugging Face（模型檔）。
+- 你這個 AI 工具自己跳出的「允許執行指令？」確認框：內容跟上面對得上就可以允許；對不上要先問我。
+
+第三，跟我確認兩件事再開工：
+- 我用的 AI 工具是哪一套（Codex desktop app／AGY／Claude Code／其他）。不是 Codex 時，hooks 改由你依文末【非 Codex 工具的做法】掛進我的工具。
+- 我目前用的模型夠不夠聰明（建議用該平台最高階模型跑安裝與訪談；快速版模型可能不會完全照步驟走）。
+
+【安裝步驟——依序執行，每步等我回報】
+1. 確認環境：Windows 10/11、目標磁碟剩餘空間 > 3GB、網路穩定。檢查空間用：
+   Get-PSDrive -PSProvider FileSystem | Select-Object Name, @{N='FreeGB';E={[math]::Round($_.Free/1GB,1)}}
+2. 開 PowerShell（一般權限即可，不用系統管理員；不要用 cmd）。
+3. 還沒有 AI 工具的話先裝（以 Codex desktop app 為例）：
+   winget install --id 9PLM9XGG6VKS -s msstore
+   裝完打開、登入帳號、確認能收到一則普通回覆。
+4. 建立並進入專屬專案資料夾（路徑用雙引號包住；不要用安裝包解壓出來的資料夾當專案）：
+   New-Item -ItemType Directory -Force -Path "C:\Users\帳號\Documents\AI記憶" | Out-Null
+   Set-Location "C:\Users\帳號\Documents\AI記憶"
+   $project = (Get-Location).Path
+   $project
+5. 裝 Node.js LTS：
+   winget install --id OpenJS.NodeJS.LTS
+6. 【重要】關掉重開 PowerShell（舊視窗吃不到新 PATH），重新 Set-Location 回專案，驗證：
+   node --version   （主版號要 ≥ 22）
+   npm --version
+7. 裝 qmd（版本要正確，不要裝別的版本）：
+   npm install -g @tobilu/qmd@2.5.3
+   qmd --version    （要印出 2.5.3）
+8. 從 GitHub 下載安裝包，解壓到「暫存資料夾」（不是專案資料夾）：
+   $download = Join-Path $env:TEMP ("ai-memory-starter-" + [guid]::NewGuid().ToString("N"))
+   New-Item -ItemType Directory -Force -Path $download | Out-Null
+   Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.2.zip" -OutFile "$download\starter.zip"
+   Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
+   $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
+   "Project: $project"
+   "Starter: $starter"
+   兩個路徑必須不同，Starter 要在 Temp 底下，而且資料夾裡要看得到 install.ps1。
+9. 先預覽再安裝：
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$starter\install.ps1" -Scope Project -WhatIf
+    確認目標落在 $project\.ai-assistant、畫面出現 No changes were made，才能往下。
+10. 正式安裝骨架（先跳過模型下載）：
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$starter\install.ps1" -Scope Project -SkipEmbedding
+11. 檢查八個路徑都存在（任何一個 False 就停下排錯，不要裝模型）：
+    .codex\hooks.json、.ai-assistant\install-manifest.json、.ai-assistant\scripts\verify-install.ps1、
+    .ai-assistant\templates\AGENTS.example.md、.agents\skills\memory-organizer\SKILL.md、
+    .agents\skills\student-profile-interview\SKILL.md、.agents\skills\project-capsule\SKILL.md、
+    memory\long-term\分類索引.md
+12. 【下載模型前，你必須先明確告訴我這段話，說完等我回「好」才執行】
+    「接下來要下載語意搜尋模型，合計約 2.5 GB，依網速可能要幾分鐘到幾十分鐘。
+    過程中畫面可能長時間沒動靜，看起來像卡住——這是正常的，不要關視窗、不要讓電腦睡著。」
+    並用白話說明這三個模型是做什麼的：embedding 模型＝把記憶檔轉成「可以用意思搜尋」的形式；
+    查詢擴展模型＝把問題自動改寫成幾種問法再搜，問得口語也搜得到；重排序模型＝把結果重排、最相關的放最前面；
+    三個都只在我自己的電腦裡跑，搜尋不用連網、記憶不會上傳雲端。
+    然後執行：
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$starter\scripts\download-embedding-model.ps1" -ProjectRoot $project
+13. 驗證索引（設四個環境變數後跑 qmd status）：
+    $env:XDG_CACHE_HOME = "$project\.ai-assistant\qmd\cache"
+    $env:XDG_CONFIG_HOME = "$project\.ai-assistant\qmd\config"
+    $env:QMD_CONFIG_DIR = "$project\.ai-assistant\qmd\config\qmd"
+    $env:INDEX_PATH = "$project\.ai-assistant\qmd\cache\qmd\index.sqlite"
+    qmd status
+    要同時看到：memory-longterm、Vectors > 0、embedding 為 Ralriki/multilingual-e5-large-instruct-GGUF。
+14. 【這一步一定要我本人動手，你不能代做】用 Codex desktop app 關閉再重新開啟專案資料夾，
+    等 hook 信任提示出現，逐一確認六個 hook 都指向 <專案>\.ai-assistant\hooks\，全部點信任。
+    提醒我：沒點信任的 hook 不會執行；日記不長、記憶搜不到，最常見原因就是這步沒做完。
+15. 跑安裝檢查器，要看到 0 failed：
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\.ai-assistant\scripts\verify-install.ps1 -ProjectRoot $project
+16. 安裝完成後，接著帶我做第一次訪談（跟你說「開始學員訪談」就會啟動 student-profile-interview 技能）。訪談寫 AGENTS.md 時，記憶段一定要包含「開工先讀目錄」那幾條規則，目錄路徑寫成這台電腦上的完整路徑（$project\memory\long-term\目錄.md 展開後的實際路徑），不能寫相對路徑。
+
+【非 Codex 工具的做法（AGY、Claude Code、Gemini CLI 等）】
+我用的不是 Codex desktop app 時，記憶資料夾、qmd、訪談與日記格式全部照常適用；hooks 改由你動手掛進我的工具：
+- 請你先查我這套工具的「官方 hook 機制文件」，把上面六個 hook 的工作翻譯成它的格式掛上。
+  （AGY 提示：hooks.json 放專案 .agents/ 目錄；事件用 PreInvocation／PreToolUse／PostToolUse／Stop；
+  終端指令的 matcher 叫 run_command 不是 Bash；PostToolUse 的 stdout 只能回 {}；
+  Mac 上腳本要用 bash 改寫，不能直接指向 Windows 的 .ps1。其他工具以它自己的官方文件為準。）
+- 規則檔也要對應：確認我的工具每輪自動讀哪個規則檔，把專案根目錄 AGENTS.md 的內容放進那個檔案。
+  Claude Code：在專案根目錄的 CLAUDE.md 寫兩行「@<專案完整路徑>/AGENTS.md」和「@<專案完整路徑>/memory/long-term/目錄.md」，一律寫完整路徑、用正斜線 /（路徑有空格就在每個空格前加反斜線）。資料夾裡有 CLAUDE.md 之後 Claude Code 不會自己讀 AGENTS.md，所以第一行不能少。
+- 步驟 3 改成安裝我實際用的工具；步驟 14 改成完成該工具自己的信任／審查流程（例如 AGY 的
+  Workspace Trust 與終端指令審查）——這一樣只能我本人按，你不能代做。
+- 掛完用「行為」驗收，不是看檔案在不在：陪我真實工作一輪，確認 memory\daily\ 日記有長出來、
+  新開對話搜得到舊內容。Windows 檢查器 verify-install.ps1 只認 Codex 格式，對其他工具不作數，
+  你要說明哪些檢查項改用行為驗收代替。
+- 只有在我的工具「真的沒有 hook 機制」時，才退而求其次在規則檔加三條固定指示：
+  1. 每輪對話結束前，把這輪的重點（我的原話、你做了什麼、結論）追加寫進 memory\daily\今天日期.md。
+  2. 我問到過去的事情時，先搜尋 memory\long-term\ 再回答。
+  3. 執行刪除、格式化、關機類指令前，先停下來向我確認。
+
+【常見卡點速查】
+- 指令碼被停用／ExecutionPolicy 錯誤 → 不改全機原則，改用帶 -ExecutionPolicy Bypass 的單次執行（上面步驟原文就是）。
+- 路徑含中文或空格出錯 → 全程雙引號包路徑；先 Set-Location 再安裝。
+- 下載失敗（npm/模型 404、逾時）→ 換穩定網路重跑同一條指令；模型只認 hf:Ralriki/multilingual-e5-large-instruct-GGUF/multilingual-e5-large-instruct-q8_0.gguf，不要換別顆。
+- 下載 GitHub 安裝包失敗（逾時、被公司網路擋）→ 換網路重跑同一條指令；還是不行，請我打開 https://github.com/tygh89071388/ai-memory-starter 按「Code → Download ZIP」手動下載，把下載後的完整路徑告訴你，改用那個檔解壓。
+- 找不到 node/npm/qmd → 關掉所有視窗重開再驗；node 要 ≥ 22。
+- qmd status 沒有 memory-longterm 或 Vectors=0 → 骨架與模型腳本要都跑完；第一次查詢慢是模型還在載，不是壞掉。
+- 日記不長、記憶不搜 → 幾乎都是六個 hook 沒點完信任，或開錯資料夾；desktop app 不支援 /hooks 指令，要用重新開啟資料夾的方式觸發信任提示。
+- 裝錯資料夾 → 不要再裝第二次；看安裝結束印出的 Hooks:/Memory: 才是真實位置，回正確資料夾先 -WhatIf 再重裝。
+- 找不到 winget → Microsoft Store 更新「App Installer」再試；還是不行改官方桌面版下載入口。
+
+【完成標準】
+上面全部走完且步驟 15 顯示 0 failed，你才可以說「安裝完成」；差哪一步就明講差哪一步。安裝完成不等於養成完成——提醒我接著做人設訪談，平常糾正你的事會先進日記，整理日記後才會出現在教訓目錄；一週後開新對話問「你記得我糾正過你什麼？」確認它有在累積。
+
+===複製到這裡結束===
