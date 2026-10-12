@@ -31,7 +31,7 @@
 
 7. 護欄還在：不要真的執行任何刪除指令。改用說明的方式，確認 danger-guard 仍在 hooks 設定裡，並解釋它會攔哪類指令；它只是輔助護欄，不是完整的安全邊界。
 
-8. 每天整理有排程：請我打開工具的排程列表（Codex：ChatGPT 桌面版側邊欄的「Scheduled」；Claude Code：桌面版 Code 分頁的 Routines），確認有一個每天跑「整理日記」的任務，再讀 memory\archive\organizer-ledger.jsonl 最後幾行，確認最近幾天有日記的日子都有整理紀錄。沒有的話，照安裝提示詞第 17 步帶我補設。
+8. 每天整理有排程：請我打開工具的排程列表（Codex：ChatGPT 桌面版側邊欄的「Scheduled」；Claude Code：桌面版 Code 分頁的 Routines），確認有一個每天跑「整理日記」的任務，再讀 memory\archive\organizer-ledger.jsonl 最後幾行，確認最近幾天、已經過了排程時間的日記都有整理紀錄（今天還沒到排程時間的不算）。沒有的話，照安裝提示詞第 17 步帶我補設。
    通過標準：我回報看得到這個任務；工具沒有排程功能的話，我確認自己每天會說一次「整理日記」。
 
 【回報格式】
