@@ -1,6 +1,6 @@
 # teach-once：教一次就記住的 AI 長期記憶
 
-**讓 AI 記得你糾正過的事。** 你糾正它一次，它自己記進日記；定期整理成一條條教訓；下次開工先讀教訓目錄，自己想起這輪該照做的規矩。
+**讓 AI 記得你糾正過的事。** 你糾正它一次，它自己記進日記；每天自動整理成一條條教訓；整理完之後新開的對話，開工先讀教訓目錄，自己想起這輪該照做的規矩。
 
 這是 [獨步天下秘密實驗室](https://www.uitwtw.com/) 雞群用了半年的記憶系統，抽出可以在一般人電腦上跑的部分開源出來。實驗過程、實測數字，以及最簡單的裝法，寫在這篇：
 
@@ -30,7 +30,7 @@ AI 會一次只帶你做一步：先說這步要做什麼、為什麼，給你�
 | 日記 | `memory\daily\YYYY-MM-DD.md` | 每輪對話結束自動把問答寫進當天日記，只往後加、不改舊的 |
 | 長期記憶 | `memory\long-term\` | 整理日記後的人物、規則、教訓、專案等，一份一個檔 |
 | 教訓目錄 | `memory\long-term\目錄.md` | 每份長期記憶一行，寫著「什麼時候該想起它」；整理時自動重建，AI 開工先讀 |
-| 搜尋索引 | `.ai-assistant\qmd\` | 用 [qmd](https://github.com/tobi/qmd)＋multilingual-e5-large-instruct 在本機搜尋長期記憶，不上傳雲端 |
+| 搜尋索引 | `.ai-assistant\qmd\` | 用 [qmd](https://github.com/tobi/qmd)＋multilingual-e5-large-instruct 在本機搜尋長期記憶，搜尋不用連網（AI 讀到的記憶內容仍會隨對話送到 AI 服務商） |
 | 規則檔 | `AGENTS.md` | AI 每次開工都會讀的說明檔：身分、溝通偏好、工作流程、禁區、記憶使用 |
 
 ### 六個 hook（Codex 格式，安裝器會自動掛上）
@@ -48,7 +48,7 @@ hook 是「工具在固定時間點一定會執行的小程式」，不靠 AI �
 
 ### 三個技能（`.agents\skills\`）
 
-- **memory-organizer**：整理日記。把日記裡的定案、教訓、偏好搬進長期記憶，合併重複、修正記錯的，最後重建教訓目錄和搜尋索引。跟 AI 說「整理日記」就會啟動，建議每週排程跑一次（安裝提示詞最後一步會帶你設）。
+- **memory-organizer**：整理日記。把日記裡的定案、教訓、偏好搬進長期記憶，合併重複、修正記錯的，最後重建教訓目錄和搜尋索引。跟 AI 說「整理日記」就會啟動，建議每天排程跑一次（安裝提示詞最後一步會帶你設）。
 - **student-profile-interview**：第一次訪談。一題一題問你的背景、溝通偏好、禁區，確認後寫成 `AGENTS.md` 和人物記憶。跟 AI 說「開始學員訪談」就會啟動。
 - **project-capsule**：專案交接卡。長期專案的目前定案、做到哪、下一步，讓新對話一打開就接得上。
 
@@ -56,10 +56,10 @@ hook 是「工具在固定時間點一定會執行的小程式」，不靠 AI �
 
 ## 平常怎麼用
 
-- **糾正它就好**：講錯了直接糾正，或說「記住…」。這件事會先進日記，整理日記後變成長期記憶，目錄也跟著更新。
+- **糾正它就好**：講錯了直接糾正，或說「記住…」。這件事會先進日記，整理日記後變成長期記憶，目錄也跟著更新。新開的對話要等整理完才會自動想起，想馬上生效就說「整理日記」。
 - **它有沒有照做，你用起來就知道**：AI 每次開工會先讀教訓目錄、自己挑出這輪要用的記憶打開來讀，不用列給你看。
 - **想查以前的事，直接問**：像「上次那份報價是怎麼算的？」，它會先去長期記憶和日記裡找，找到會說是哪個檔，沒找到就說沒找到。
-- **定期整理**：安裝提示詞最後一步會帶你設一個每週跑一次的「整理日記」排程（Claude Code 桌面版和 Codex 的 ChatGPT 桌面版都有排程任務）；工具沒有排程功能的話，就每週自己跟 AI 說一次「整理日記」。
+- **定期整理**：安裝提示詞最後一步會帶你設一個每天跑一次的「整理日記」排程（Claude Code 桌面版和 Codex 的 ChatGPT 桌面版都有排程任務）；工具沒有排程功能的話，就每天收工前自己跟 AI 說一次「整理日記」。
 - **一週後驗收**：開一個新對話，貼上 [`prompts/一週後驗收提示詞.txt`](prompts/一週後驗收提示詞.txt)，讓 AI 逐項拿證據驗收，八項全過才算真的裝好。
 
 日常要記的幾件事整理在 [`docs/課後小抄.md`](docs/課後小抄.md)。
@@ -91,7 +91,7 @@ qmd --version    # 要印出 2.5.3
 # 4. 下載這個 repo 到暫存資料夾
 $download = Join-Path $env:TEMP ("teach-once-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Force -Path $download | Out-Null
-Invoke-WebRequest -Uri "https://github.com/tygh89071388/teach-once/archive/refs/tags/v1.3.1.zip" -OutFile "$download\starter.zip"
+Invoke-WebRequest -Uri "https://github.com/tygh89071388/teach-once/archive/refs/tags/v1.3.2.zip" -OutFile "$download\starter.zip"
 Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
 $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
 

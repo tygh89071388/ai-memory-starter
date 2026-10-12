@@ -68,7 +68,7 @@
 8. 從 GitHub 下載安裝包，解壓到「暫存資料夾」（不是專案資料夾）：
    $download = Join-Path $env:TEMP ("teach-once-" + [guid]::NewGuid().ToString("N"))
    New-Item -ItemType Directory -Force -Path $download | Out-Null
-   Invoke-WebRequest -Uri "https://github.com/tygh89071388/teach-once/archive/refs/tags/v1.3.1.zip" -OutFile "$download\starter.zip"
+   Invoke-WebRequest -Uri "https://github.com/tygh89071388/teach-once/archive/refs/tags/v1.3.2.zip" -OutFile "$download\starter.zip"
    Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
    $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
    "Project: $project"
@@ -89,7 +89,7 @@
     過程中畫面可能長時間沒動靜，看起來像卡住——這是正常的，不要關視窗、不要讓電腦睡著。」
     並用白話說明這三個模型是做什麼的：embedding 模型＝把記憶檔轉成「可以用意思搜尋」的形式；
     查詢擴展模型＝把問題自動改寫成幾種問法再搜，問得口語也搜得到；重排序模型＝把結果重排、最相關的放最前面；
-    三個都只在我自己的電腦裡跑，搜尋不用連網、記憶不會上傳雲端。
+    三個都只在我自己的電腦裡跑，搜尋不用連網，記憶檔也只存在我的電腦；但你讀到的記憶內容，會跟我們平常的對話一樣送到 AI 公司的伺服器。
     然後執行：
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$starter\scripts\download-embedding-model.ps1" -ProjectRoot $project
 13. 驗證索引（設四個環境變數後跑 qmd status）：
@@ -105,11 +105,11 @@
 15. 跑安裝檢查器，要看到 0 failed：
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\.ai-assistant\scripts\verify-install.ps1 -ProjectRoot $project
 16. 安裝完成後，接著帶我做第一次訪談（跟你說「開始學員訪談」就會啟動 student-profile-interview 技能）。訪談寫 AGENTS.md 時，記憶段一定要包含「開工先讀目錄」那幾條規則，目錄路徑寫成這台電腦上的完整路徑（$project\memory\long-term\目錄.md 展開後的實際路徑），不能寫相對路徑。
-17. 帶我設定「每週自動整理一次日記」。日記每輪由 hook 自動寫，但要變成長期記憶、重建教訓目錄，得跑一次整理（memory-organizer 技能）；沒設排程的話，日記會一直長，教訓目錄卻不會更新。依我用的工具帶我設：
-    - Codex（ChatGPT 桌面版）：直接在這個對話裡幫我建立排程任務（或帶我到側邊欄「Scheduled」新增）：專案選 $project，每週一次，任務內容寫「整理日記：照 $project\.agents\skills\memory-organizer\SKILL.md 整理過去 7 天的日記」（$project 展開成這台電腦上的實際路徑）。
-    - Claude Code 桌面版：在 Code 分頁按 Routines → New routine → Local，資料夾選 $project，Schedule 選 Weekly，Instructions 寫同一句；也可以直接在桌面版對話裡請 Claude 幫我建。建好後按一次 Run now，出現權限詢問就選 always allow，之後每週跑才不會卡住。
-    - 其他工具，或沒有排程功能：提醒我每週自己跟你說一次「整理日記」。
-    排程只在電腦開著、App 開著時才會跑。設好後請我打開排程列表，看得到這個任務才算完成這步。
+17. 帶我設定「每天自動整理一次日記」。日記每輪由 hook 自動寫，但我糾正你的事，要等整理（memory-organizer 技能）跑完、重建教訓目錄和搜尋索引之後，新開的對話才會自動想起；整理之前，只有當下這個對話記得。請先用白話把這件事講給我聽。沒設排程的話，日記會一直長，教訓目錄卻不會更新。依我用的工具帶我設：
+    - Codex（ChatGPT 桌面版）：直接在這個對話裡幫我建立排程任務（或帶我到側邊欄「Scheduled」新增）：專案選 $project，每天一次（挑我平常電腦開著的時間；選單沒有每天的選項，就用自訂排程設成每天），任務內容寫「整理日記：照 $project\.agents\skills\memory-organizer\SKILL.md 整理還沒整理過的日記（範圍照技能 Step 0「排程整理的範圍」判定，已整理過的段落不要重做）。沒有新內容就回報「沒有新內容」並結束；遇到需要我確認的事，列在最後回覆並停下，不要自己決定。」（$project 展開成這台電腦上的實際路徑）。
+    - Claude Code 桌面版：在 Code 分頁按 Routines → New routine → Local，資料夾選 $project，Schedule 選 Daily，Instructions 寫同一句；也可以直接在桌面版對話裡請 Claude 幫我建。建好後按一次 Run now，出現權限詢問就選 always allow，之後每天跑才不會卡住。
+    - 其他工具，或沒有排程功能：提醒我每天收工前自己跟你說一次「整理日記」。
+    排程只在電腦開著、App 開著時才會跑；錯過的那幾次不一定會補跑，所以任務內容寫的是「整理還沒整理過的日記」，隔幾天才跑也不會漏。設好後請我打開排程列表，看得到這個任務才算完成這步。
 
 【非 Codex 工具的做法（AGY、Claude Code、Gemini CLI 等）】
 我用的不是 Codex desktop app 時，記憶資料夾、qmd、訪談與日記格式全部照常適用；hooks 改由你動手掛進我的工具：
@@ -141,6 +141,6 @@
 - 找不到 winget → Microsoft Store 更新「App Installer」再試；還是不行改官方桌面版下載入口。
 
 【完成標準】
-上面全部走完且步驟 15 顯示 0 failed，你才可以說「安裝完成」；差哪一步就明講差哪一步。安裝完成不等於養成完成——提醒我接著做人設訪談（步驟 16）和每週整理排程（步驟 17），平常糾正你的事會先進日記，整理日記後才會出現在教訓目錄；一週後開新對話問「你記得我糾正過你什麼？」確認它有在累積。
+上面全部走完且步驟 15 顯示 0 failed，你才可以說「安裝完成」；差哪一步就明講差哪一步。安裝完成不等於養成完成——提醒我接著做人設訪談（步驟 16）和每天整理排程（步驟 17）。平常糾正你的事會先進日記，整理完之後新開的對話才會自動想起；想讓剛剛的糾正馬上生效，就跟你說「整理日記」。一週後開新對話問「你記得我糾正過你什麼？」確認它有在累積。
 
 ===複製到這裡結束===
