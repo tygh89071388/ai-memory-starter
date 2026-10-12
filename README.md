@@ -1,10 +1,10 @@
-# AI 長期記憶入門包（ai-memory-starter）
+# teach-once：教一次就記住的 AI 長期記憶
 
 **讓 AI 記得你糾正過的事。** 你糾正它一次，它自己記進日記；定期整理成一條條教訓；下次開工先讀教訓目錄，自己想起這輪該照做的規矩。
 
 這是 [獨步天下秘密實驗室](https://www.uitwtw.com/) 雞群用了半年的記憶系統，抽出可以在一般人電腦上跑的部分開源出來。實驗過程、實測數字，以及最簡單的裝法，寫在這篇：
 
-👉 **[AI 都不記得你的教訓？站長花半年自己做了一套記憶系統！](https://www.uitwtw.com/ai/ai-long-term-memory/)**
+👉 **[【AI 長期記憶】AI 都不記得你的教訓？站長花半年實測，最後把「記憶秘書」開除了](https://www.uitwtw.com/ai/ai-long-term-memory/)**
 
 - 記憶全部是你電腦裡的純文字檔（Markdown），打得開、看得懂、改得動
 - 換 AI 工具、換模型，記憶資料夾帶著走
@@ -86,9 +86,9 @@ npm install -g @tobilu/qmd@2.5.3
 qmd --version    # 要印出 2.5.3
 
 # 4. 下載這個 repo 到暫存資料夾
-$download = Join-Path $env:TEMP ("ai-memory-starter-" + [guid]::NewGuid().ToString("N"))
+$download = Join-Path $env:TEMP ("teach-once-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Force -Path $download | Out-Null
-Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.3.zip" -OutFile "$download\starter.zip"
+Invoke-WebRequest -Uri "https://github.com/tygh89071388/teach-once/archive/refs/tags/v1.3.1.zip" -OutFile "$download\starter.zip"
 Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
 $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
 

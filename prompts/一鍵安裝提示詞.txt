@@ -5,16 +5,16 @@
 
 ===複製從這裡開始===
 
-請帶我完成「AI 長期記憶入門包」的完整安裝（開源版：https://github.com/tygh89071388/ai-memory-starter）。我可能完全不懂程式。請完整讀完這整段指示再開始。
+請帶我完成「teach-once（AI 長期記憶入門包）」的完整安裝（開源版：https://github.com/tygh89071388/teach-once）。我可能完全不懂程式。請完整讀完這整段指示再開始。
 
 【安裝包來源】
-安裝包放在 GitHub：https://github.com/tygh89071388/ai-memory-starter（下面步驟 8 會帶我下載）。
+安裝包放在 GitHub：https://github.com/tygh89071388/teach-once（下面步驟 8 會帶我下載）。
 如果你能上網，可以先打開這個網址看 README，確認裡面有 install.ps1、hooks、.agents\skills；不能上網也沒關係，這段提示詞已含全部步驟。
 
 【工作方式——每一步都照這個節奏】
 1. 一次只給我一個步驟：先用一句話講「這步要做什麼、為什麼」，再給可以整段複製的指令，再講「預期會看到什麼畫面」。
 2. 給完就停下來，等我回報畫面或貼出輸出，你確認符合預期才給下一步。
-3. 我貼出的畫面跟預期不同時，先對照文末的「常見卡點」，對得上就直接給解法；對不上就明說你不確定，請我打開 https://github.com/tygh89071388/ai-memory-starter 看「常見問題」段，不要瞎猜。
+3. 我貼出的畫面跟預期不同時，先對照文末的「常見卡點」，對得上就直接給解法；對不上就明說你不確定，請我打開 https://github.com/tygh89071388/teach-once 看「常見問題」段，不要瞎猜。
 4. 全程繁體中文。不要用「應該可以」「理論上」這種模糊說法：要嘛給明確下一步，要嘛承認不確定。
 5. 指令照這段提示詞裡的原文給，不要自行改參數、不要換模型名稱、不要加沒列出的參數。
 
@@ -66,9 +66,9 @@
    npm install -g @tobilu/qmd@2.5.3
    qmd --version    （要印出 2.5.3）
 8. 從 GitHub 下載安裝包，解壓到「暫存資料夾」（不是專案資料夾）：
-   $download = Join-Path $env:TEMP ("ai-memory-starter-" + [guid]::NewGuid().ToString("N"))
+   $download = Join-Path $env:TEMP ("teach-once-" + [guid]::NewGuid().ToString("N"))
    New-Item -ItemType Directory -Force -Path $download | Out-Null
-   Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.3.zip" -OutFile "$download\starter.zip"
+   Invoke-WebRequest -Uri "https://github.com/tygh89071388/teach-once/archive/refs/tags/v1.3.1.zip" -OutFile "$download\starter.zip"
    Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
    $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
    "Project: $project"
@@ -133,7 +133,7 @@
 - 指令碼被停用／ExecutionPolicy 錯誤 → 不改全機原則，改用帶 -ExecutionPolicy Bypass 的單次執行（上面步驟原文就是）。
 - 路徑含中文或空格出錯 → 全程雙引號包路徑；先 Set-Location 再安裝。
 - 下載失敗（npm/模型 404、逾時）→ 換穩定網路重跑同一條指令；模型只認 hf:Ralriki/multilingual-e5-large-instruct-GGUF/multilingual-e5-large-instruct-q8_0.gguf，不要換別顆。
-- 下載 GitHub 安裝包失敗（逾時、被公司網路擋）→ 換網路重跑同一條指令；還是不行，請我打開 https://github.com/tygh89071388/ai-memory-starter 按「Code → Download ZIP」手動下載，把下載後的完整路徑告訴你，改用那個檔解壓。
+- 下載 GitHub 安裝包失敗（逾時、被公司網路擋）→ 換網路重跑同一條指令；還是不行，請我打開 https://github.com/tygh89071388/teach-once 按「Code → Download ZIP」手動下載，把下載後的完整路徑告訴你，改用那個檔解壓。
 - 找不到 node/npm/qmd → 關掉所有視窗重開再驗；node 要 ≥ 22。
 - qmd status 沒有 memory-longterm 或 Vectors=0 → 骨架與模型腳本要都跑完；第一次查詢慢是模型還在載，不是壞掉。
 - 日記不長、記憶不搜 → 幾乎都是六個 hook 沒點完信任，或開錯資料夾；desktop app 不支援 /hooks 指令，要用重新開啟資料夾的方式觸發信任提示。
