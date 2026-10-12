@@ -39,7 +39,7 @@ hook 是「工具在固定時間點一定會執行的小程式」，不靠 AI �
 
 | hook | 什麼時候跑 | 做什麼 | 沒有它會怎樣 |
 |---|---|---|---|
-| `session-start` | 開新對話 | 載入近期日記脈絡 | AI 不知道最近發生什麼 |
+| `session-start` | 開新對話 | 告訴 AI 今天日期，和最近在忙的 3 個專案 | AI 不知道今天幾號、最近在忙哪些專案 |
 | `journal-prompt` | 你送出訊息 | 暫存你的原話，準備寫日記 | 日記缺你的原始問題 |
 | `memory-recall` | 你送出訊息 | 用 qmd 搜長期記憶，附上參考片段 | AI 要你提醒才想起舊事 |
 | `journal-tool` | AI 用工具後 | 只記用了哪些工具，不塞完整輸出 | 日記少一層行為紀錄 |
@@ -48,7 +48,7 @@ hook 是「工具在固定時間點一定會執行的小程式」，不靠 AI �
 
 ### 三個技能（`.agents\skills\`）
 
-- **memory-organizer**：整理日記。把日記裡的定案、教訓、偏好搬進長期記憶，合併重複、修正記錯的，最後重建教訓目錄和搜尋索引。跟 AI 說「整理日記」就會啟動，建議每天或每週排程跑一次。
+- **memory-organizer**：整理日記。把日記裡的定案、教訓、偏好搬進長期記憶，合併重複、修正記錯的，最後重建教訓目錄和搜尋索引。跟 AI 說「整理日記」就會啟動，建議每週排程跑一次（安裝提示詞最後一步會帶你設）。
 - **student-profile-interview**：第一次訪談。一題一題問你的背景、溝通偏好、禁區，確認後寫成 `AGENTS.md` 和人物記憶。跟 AI 說「開始學員訪談」就會啟動。
 - **project-capsule**：專案交接卡。長期專案的目前定案、做到哪、下一步，讓新對話一打開就接得上。
 
@@ -59,7 +59,7 @@ hook 是「工具在固定時間點一定會執行的小程式」，不靠 AI �
 - **糾正它就好**：講錯了直接糾正，或說「記住…」。這件事會先進日記，整理日記後變成長期記憶，目錄也跟著更新。
 - **它有沒有照做，你用起來就知道**：AI 每次開工會先讀教訓目錄、自己挑出這輪要用的記憶打開來讀，不用列給你看。
 - **想查以前的事，直接問**：像「上次那份報價是怎麼算的？」，它會先去長期記憶和日記裡找，找到會說是哪個檔，沒找到就說沒找到。
-- **定期整理**：Claude Code 桌面版和 Codex（ChatGPT 桌面版）都有排程任務，設一個每天或每週跑一次「整理日記」就好。
+- **定期整理**：安裝提示詞最後一步會帶你設一個每週跑一次的「整理日記」排程（Claude Code 桌面版和 Codex 的 ChatGPT 桌面版都有排程任務）；工具沒有排程功能的話，就每週自己跟 AI 說一次「整理日記」。
 
 ### 為什麼是「教訓目錄」，不是每次都去搜尋？
 
@@ -88,7 +88,7 @@ qmd --version    # 要印出 2.5.3
 # 4. 下載這個 repo 到暫存資料夾
 $download = Join-Path $env:TEMP ("ai-memory-starter-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Force -Path $download | Out-Null
-Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.2.zip" -OutFile "$download\starter.zip"
+Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.3.zip" -OutFile "$download\starter.zip"
 Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
 $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
 

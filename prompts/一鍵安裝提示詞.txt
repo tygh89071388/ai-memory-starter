@@ -25,7 +25,7 @@
 - 日記放在哪：memory\daily\，每天一個檔，AI 工作後自動追加。
 - 教訓目錄放在哪：memory\long-term\目錄.md，每份長期記憶一行、寫著「什麼時候該想起」；整理日記時自動重建，你每次開工先讀它，自己挑出這輪要用的記憶。
 - 會裝六個自動化 hooks（安裝器內建 Codex 格式；用其他工具時由你依該工具官方格式掛上，見文末），逐一講清楚「做什麼、有它的好處、沒裝或沒信任會少什麼」：
-  1. session-start：開新對話時自動載入近期日記脈絡。沒有它＝每次開對話 AI 都不知道最近發生什麼。
+  1. session-start：開新對話時告訴 AI 今天的日期（星期幾），和最近在忙的 3 個專案（memory\long-term\專案\ 底下最近更新的專案交接卡）。沒有它＝AI 不知道今天幾號、最近在忙哪些專案。
   2. journal-prompt：我送出訊息時暫存原話準備寫日記。沒有它＝日記缺我的原始問題。
   3. memory-recall：我提問時自動搜尋長期記憶。沒有它＝AI 不會主動想起舊記憶，要我手動提醒。
   4. journal-tool：只記錄用了哪些工具，不塞完整輸出。沒有它＝日記少一層行為紀錄。
@@ -68,7 +68,7 @@
 8. 從 GitHub 下載安裝包，解壓到「暫存資料夾」（不是專案資料夾）：
    $download = Join-Path $env:TEMP ("ai-memory-starter-" + [guid]::NewGuid().ToString("N"))
    New-Item -ItemType Directory -Force -Path $download | Out-Null
-   Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.2.zip" -OutFile "$download\starter.zip"
+   Invoke-WebRequest -Uri "https://github.com/tygh89071388/ai-memory-starter/archive/refs/tags/v1.3.zip" -OutFile "$download\starter.zip"
    Expand-Archive -Path "$download\starter.zip" -DestinationPath $download
    $starter = (Get-ChildItem -LiteralPath $download -Directory | Select-Object -First 1).FullName
    "Project: $project"
@@ -105,6 +105,11 @@
 15. 跑安裝檢查器，要看到 0 failed：
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\.ai-assistant\scripts\verify-install.ps1 -ProjectRoot $project
 16. 安裝完成後，接著帶我做第一次訪談（跟你說「開始學員訪談」就會啟動 student-profile-interview 技能）。訪談寫 AGENTS.md 時，記憶段一定要包含「開工先讀目錄」那幾條規則，目錄路徑寫成這台電腦上的完整路徑（$project\memory\long-term\目錄.md 展開後的實際路徑），不能寫相對路徑。
+17. 帶我設定「每週自動整理一次日記」。日記每輪由 hook 自動寫，但要變成長期記憶、重建教訓目錄，得跑一次整理（memory-organizer 技能）；沒設排程的話，日記會一直長，教訓目錄卻不會更新。依我用的工具帶我設：
+    - Codex（ChatGPT 桌面版）：直接在這個對話裡幫我建立排程任務（或帶我到側邊欄「Scheduled」新增）：專案選 $project，每週一次，任務內容寫「整理日記：照 $project\.agents\skills\memory-organizer\SKILL.md 整理過去 7 天的日記」（$project 展開成這台電腦上的實際路徑）。
+    - Claude Code 桌面版：在 Code 分頁按 Routines → New routine → Local，資料夾選 $project，Schedule 選 Weekly，Instructions 寫同一句；也可以直接在桌面版對話裡請 Claude 幫我建。建好後按一次 Run now，出現權限詢問就選 always allow，之後每週跑才不會卡住。
+    - 其他工具，或沒有排程功能：提醒我每週自己跟你說一次「整理日記」。
+    排程只在電腦開著、App 開著時才會跑。設好後請我打開排程列表，看得到這個任務才算完成這步。
 
 【非 Codex 工具的做法（AGY、Claude Code、Gemini CLI 等）】
 我用的不是 Codex desktop app 時，記憶資料夾、qmd、訪談與日記格式全部照常適用；hooks 改由你動手掛進我的工具：
@@ -136,6 +141,6 @@
 - 找不到 winget → Microsoft Store 更新「App Installer」再試；還是不行改官方桌面版下載入口。
 
 【完成標準】
-上面全部走完且步驟 15 顯示 0 failed，你才可以說「安裝完成」；差哪一步就明講差哪一步。安裝完成不等於養成完成——提醒我接著做人設訪談，平常糾正你的事會先進日記，整理日記後才會出現在教訓目錄；一週後開新對話問「你記得我糾正過你什麼？」確認它有在累積。
+上面全部走完且步驟 15 顯示 0 failed，你才可以說「安裝完成」；差哪一步就明講差哪一步。安裝完成不等於養成完成——提醒我接著做人設訪談（步驟 16）和每週整理排程（步驟 17），平常糾正你的事會先進日記，整理日記後才會出現在教訓目錄；一週後開新對話問「你記得我糾正過你什麼？」確認它有在累積。
 
 ===複製到這裡結束===
